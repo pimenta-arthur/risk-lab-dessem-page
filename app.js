@@ -432,7 +432,7 @@
       else if (PER_N === "mes") rs = rs.filter(r => r[0].startsWith(ult.slice(0, 7)));
       else if (PER_N === "ano") rs = rs.filter(r => r[0].startsWith(ult.slice(0, 4)));
       else if (PER_N === "3m") { const d = new Date(ult + "T12:00:00Z"); d.setUTCMonth(d.getUTCMonth() - 3); const c = d.toISOString().slice(0, 10); rs = rs.filter(r => r[0] > c); }
-      document.getElementById("tt-nivel").textContent = `PLD médio do dia: DESSEM e DECOMP vigente · ${SUBN[SUB_N]}`;
+      document.getElementById("tt-nivel").textContent = `PLD médio do dia: DESSEM e DECOMP · ${SUBN[SUB_N]}`;
       const xs = rs.map(r => r[0]), u = rs[rs.length - 1] || [];
       // revisões do período: índices do primeiro e do último dia, médias de DECOMP e DESSEM nos dias mostrados
       const grupos = [];
