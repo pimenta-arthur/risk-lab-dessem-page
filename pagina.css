@@ -190,3 +190,140 @@ table.ind td small { display: block; color: var(--ink-3); font-size: 0.7rem; }
 table.mat td.n b { font-size: 1.05rem; }
 table.mat td.ok { background: color-mix(in srgb, var(--accent) 16%, transparent); }
 table.mat td small { display: block; color: var(--ink-3); }
+
+/* quadro de premissas contido no bloco (D089): largura fixa, textos auxiliares quebram linha, régua quebra em tela estreita */
+#t-prem { width: 100%; table-layout: fixed; }
+#t-prem td:first-child, #t-prem th:first-child { width: 8.2rem; }
+#t-prem td.n { white-space: normal; }
+#t-prem td small { white-space: normal; overflow-wrap: anywhere; line-height: 1.35; }
+#t-prem input { width: 100%; max-width: 4.6rem; }
+#t-prem td[colspan="3"] input { max-width: 5.5rem; }
+#t-prem .regua { flex-wrap: wrap; }
+#t-prem .regua span { flex: 1 1 2.9rem; }
+@media (max-width: 560px) {
+  #t-prem td:first-child, #t-prem th:first-child { width: 6.4rem; }
+  #t-prem td, #t-prem th { padding: 4px 3px; }
+  .sim-nums2 { grid-template-columns: 1fr; }
+  #t-peso { width: 100%; table-layout: fixed; }
+  #t-peso th, #t-peso td { padding: 4px 3px; font-size: 0.74rem; white-space: normal; }
+  #t-peso th:first-child, #t-peso td:first-child { width: 4.6rem; }
+  #t-peso th, #t-prem th { white-space: normal; overflow-wrap: normal; letter-spacing: 0; font-size: 0.62rem; }
+}
+
+/* variantes do bloco de simulação em teste (D090): [data-sim="a"] tabela única, [data-sim="b"] duas tabelas */
+[data-sim] #b-sim { gap: 12px; }
+[data-sim] .sim-entrada { display: flex; flex-wrap: wrap; align-items: end; gap: 10px 22px; padding-bottom: 12px; border-bottom: 1px solid var(--rule); }
+[data-sim] .sim-entrada .ttl { margin: 0; flex: 1 1 100%; }
+[data-sim] .sim-entrada .reset { margin-left: auto; }
+[data-sim] .campo { display: grid; gap: 4px; }
+[data-sim] .campo > span { font-family: var(--f-data); font-size: 0.66rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-3); }
+[data-sim] .lin-campo { display: flex; align-items: center; gap: 8px; }
+[data-sim] #inp-decomp, [data-sim] #inp-sens { width: 5rem; font: 500 0.95rem var(--f-data); text-align: right; padding: 4px 6px; border: 1px solid var(--rule); border-radius: 4px; background: var(--bg); color: var(--ink); }
+[data-sim] #inp-sens.editado { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+[data-sim] .sim-faixa { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+[data-sim] .sim-faixa .tile { padding: 10px 12px; display: grid; gap: 2px; align-content: start; }
+[data-sim] .sim-faixa .tile .v { font-size: 1.55rem; line-height: 1.15; }
+[data-sim] .sim-faixa .tile .d { font-size: 0.8rem; color: var(--ink-2); }
+[data-sim] .sim-sens { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding-top: 10px; border-top: 1px solid var(--rule); }
+[data-sim] .sim-sens .rot { font-family: var(--f-data); font-size: 0.66rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-3); }
+[data-sim] .sim-sens small { color: var(--ink-3); font-size: 0.72rem; }
+[data-sim] .sim-sens .regua { display: flex; flex-wrap: wrap; gap: 6px; flex: 1 1 320px; max-width: 460px; }
+[data-sim] .sim-sens .regua span { flex: 1 1 0; min-width: 58px; padding: 4px 6px; font-size: 0.85rem; }
+[data-sim] .info { cursor: help; color: var(--ink-3); font-size: 0.9rem; }
+[data-sim] #leg-sim { margin: 0; }
+[data-sim] #t-prem td.n, [data-sim] #t-prem th.n { text-align: center; }
+[data-sim] #t-prem input { margin-inline: auto; display: block; }
+[data-sim] #t-prem td.n small { text-align: center; }
+[data-sim="a"] #t-prem td:first-child, [data-sim="a"] #t-prem th:first-child { width: 10rem; }
+[data-sim="a"] #t-prem .col-mes { width: 5.2rem; text-align: right; }
+[data-sim="a"] #t-prem small.contrib { color: var(--ink-2); }
+[data-sim="a"] #t-prem small.peso-lbl { display: none; }
+[data-sim="a"] #t-prem tr.destaque td { font-family: var(--f-data); }
+@media (min-width: 901px) { [data-sim="b"] .sim-grade { grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); } }
+@media (max-width: 900px) { [data-sim] .sim-faixa { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) {
+  [data-sim] .sim-entrada { gap: 10px 14px; }
+  [data-sim] .sim-faixa .tile .v { font-size: 1.3rem; }
+  [data-sim] .reset { width: 100%; }
+  [data-sim="a"] #t-prem .col-mes { display: none; }
+  [data-sim="a"] #t-prem small.peso-lbl { display: block; color: var(--ink-2); margin-top: 3px; }
+  [data-sim="a"] #t-prem td:first-child, [data-sim="a"] #t-prem th:first-child { width: 6.4rem; }
+}
+
+/* variante A, segunda rodada (D090): tabela estreita + resumo para a mesa ao lado */
+[data-sim="a"] .sim-corpo { display: grid; grid-template-columns: minmax(0, 40rem) minmax(16rem, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 1100px) { [data-sim="a"] .sim-corpo { grid-template-columns: minmax(0, 1fr); } [data-sim="a"] .sim-resumo { order: -1; } }
+[data-sim="a"] #t-prem td:first-child, [data-sim="a"] #t-prem th:first-child { width: 9.2rem; }
+[data-sim="a"] #t-prem .col-mes { width: 4.6rem; }
+[data-sim] .lin-campo.centro { justify-content: center; gap: 6px; }
+[data-sim] .lin-campo.centro input { margin-inline: 0 !important; }
+.sim-resumo { border: 1px solid var(--rule); border-radius: 6px; padding: 12px 14px; background: var(--bg); display: grid; gap: 6px; align-content: start; }
+.sim-resumo .res-k { font-family: var(--f-data); font-size: 0.66rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-3); }
+.sim-resumo .res-num { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.sim-resumo .res-num b { font: 600 1.9rem var(--f-data); line-height: 1.1; }
+.sim-resumo .res-num span { font-size: 0.8rem; color: var(--ink-3); }
+.sim-resumo .res-dir { font-weight: 600; font-size: 1.02rem; }
+.sim-resumo .res-lista { display: grid; grid-template-columns: 7.4rem minmax(0, 1fr); gap: 5px 10px; margin: 4px 0 0; font-size: 0.82rem; }
+.sim-resumo .res-lista dt { font-family: var(--f-data); font-size: 0.64rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); padding-top: 2px; }
+.sim-resumo .res-lista dd { margin: 0; color: var(--ink-2); }
+.sim-resumo .res-alertas { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 6px; }
+.sim-resumo .res-alertas li { border-left: 2px solid var(--ink-3); padding-left: 8px; font-size: 0.8rem; color: var(--ink-2); }
+@media (max-width: 560px) { .sim-resumo .res-lista { grid-template-columns: 1fr; gap: 1px 0; } .sim-resumo .res-lista dd { margin-bottom: 4px; } }
+
+/* variante A, terceira rodada (D090): sensibilidade embaixo da tabela, coluna esquerda com a altura do resumo */
+[data-sim="a"] .sim-corpo { align-items: stretch; }
+[data-sim="a"] .sim-esq { display: flex; flex-direction: column; justify-content: space-between; gap: 12px; min-width: 0; }
+[data-sim="a"] .sim-esq .sim-sens .regua { flex: 1 1 100%; max-width: none; }
+
+/* desconto único alinhado à coluna Útil (D090): mesma largura dos outros campos, na primeira terça parte da célula */
+[data-sim] #t-prem td[colspan="3"] { text-align: left; }
+[data-sim] #t-prem td[colspan="3"] .lin-campo.centro { position: relative; width: calc(100% / 3); justify-content: center; }
+[data-sim] #t-prem td[colspan="3"] input { max-width: 4.6rem; }
+[data-sim] #t-prem td[colspan="3"] .lin-campo.centro .info { position: absolute; left: calc(50% + 2.3rem + 6px); }
+[data-sim] #t-prem td[colspan="3"] small { text-align: left !important; padding-left: max(0px, calc((100% / 3 - 4.6rem) / 2)); }
+[data-sim] #t-prem td[colspan="3"] .lin-campo.centro { margin-left: -4px; }
+@media (max-width: 560px) { [data-sim] #t-prem td[colspan="3"] .lin-campo.centro { margin-left: 0; width: calc(100% / 3 - 4px); } }
+
+/* dica com quebra de linha (D090): o texto longo não sai da caixa */
+.dica { white-space: normal; max-width: min(360px, calc(100vw - 16px)); }
+
+/* sensibilidade na grade da tabela (D090): campo no eixo da coluna Útil, texto à direita, régua embaixo */
+[data-sim="a"] .sim-sens.grade { display: grid; grid-template-columns: 9.2rem repeat(3, minmax(0, 1fr)) 4.6rem 4.6rem; align-items: center; gap: 8px 0; }
+[data-sim="a"] .sim-sens.grade .sens-rot { padding-left: 6px; display: grid; gap: 1px; }
+[data-sim="a"] .sim-sens.grade .sens-rot small { font-size: 0.68rem; color: var(--ink-3); }
+[data-sim="a"] .sim-sens.grade .sens-inp { display: flex; justify-content: center; padding-inline: 6px; }
+[data-sim="a"] .sim-sens.grade #inp-sens { width: 100%; max-width: 4.6rem; padding: 3px 6px; font-size: 0.88rem; }
+[data-sim="a"] .sim-sens.grade .sens-txt { grid-column: 3 / -1; padding-left: 6px; font-size: 0.8rem; color: var(--ink-2); }
+[data-sim="a"] .sim-sens.grade .regua { grid-column: 2 / -1; padding-inline: 6px; max-width: none; flex-wrap: nowrap; }
+@media (max-width: 560px) {
+  [data-sim="a"] .sim-sens.grade { grid-template-columns: 6.4rem repeat(3, minmax(0, 1fr)); }
+  [data-sim="a"] .sim-sens.grade .sens-rot { padding-left: 3px; }
+  [data-sim="a"] .sim-sens.grade .sens-inp { padding-inline: 3px; }
+  [data-sim="a"] .sim-sens.grade .regua { grid-column: 1 / -1; padding-inline: 3px; flex-wrap: wrap; }
+}
+[data-sim="a"] .sim-sens.grade .sens-rot .rotulo-prem { font-size: 0.82rem; }
+@media (max-width: 560px) { [data-sim] #t-prem input, [data-sim="a"] .sim-sens.grade #inp-sens { padding: 3px 2px; font-size: 0.8rem; } }
+
+/* resumo para a mesa, versão 2 (D091): leitura no topo e cada item com valor, "como ler" e método na dica */
+.sim-resumo .res-leitura { margin: 2px 0 4px; font-size: 0.86rem; line-height: 1.45; color: var(--ink); border-left: 2px solid var(--accent); padding-left: 8px; }
+.sim-resumo .res-itens { display: grid; gap: 9px; }
+.sim-resumo .res-item { display: grid; grid-template-columns: 7.6rem minmax(0, 1fr); gap: 1px 10px; }
+.sim-resumo .res-l { grid-row: span 2; font-family: var(--f-data); font-size: 0.64rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); padding-top: 2px; }
+.sim-resumo .res-v { font-weight: 600; font-size: 0.88rem; }
+.sim-resumo .res-c { font-size: 0.78rem; color: var(--ink-2); line-height: 1.4; }
+@media (max-width: 560px) { .sim-resumo .res-item { grid-template-columns: 1fr; } .sim-resumo .res-l { grid-row: auto; } }
+.sim-resumo .res-item { grid-template-columns: 6.6rem minmax(0, 1fr); }
+.sim-resumo .res-itens { gap: 7px; }
+.sim-resumo .res-c { font-size: 0.76rem; }
+/* resumo v2 com a altura do resumo A (D091): rótulos numa linha, itens mais juntos */
+.sim-resumo .res-item { grid-template-columns: 7.4rem minmax(0, 1fr); }
+.sim-resumo .res-l { white-space: nowrap; letter-spacing: 0.03em; }
+.sim-resumo .res-itens { gap: 6px; }
+.sim-resumo { gap: 4px; }
+.sim-resumo .res-item { grid-template-columns: 8.1rem minmax(0, 1fr); } .sim-resumo .res-l { font-size: 0.62rem; letter-spacing: 0.02em; }
+.sim-resumo .res-v.leve { font-weight: 400; font-size: 0.82rem; color: var(--ink-2); }
+@media (min-width: 1101px) { [data-sim="a"] .sim-corpo { grid-template-columns: minmax(0, 35rem) minmax(16rem, 1fr); } }
+@media (min-width: 1101px) { [data-sim="a"] #t-prem small.contrib { white-space: nowrap; font-size: 0.66rem; letter-spacing: -0.01em; } }
+/* rodapé do bloco junto da sensibilidade, no pé da coluna da tabela (D091): termina na altura do fim do resumo */
+[data-sim="a"] .sim-pe { display: grid; gap: 10px; }
+[data-sim="a"] .sim-pe #leg-sim { margin: 0; }
