@@ -327,3 +327,10 @@ table.mat td small { display: block; color: var(--ink-3); }
 /* rodapé do bloco junto da sensibilidade, no pé da coluna da tabela (D091): termina na altura do fim do resumo */
 [data-sim="a"] .sim-pe { display: grid; gap: 10px; }
 [data-sim="a"] .sim-pe #leg-sim { margin: 0; }
+/* sensibilidade presa à tabela (D093): fica a 12 px de "Desvio do mês"; só o rodapé acompanha o fim do resumo */
+[data-sim="a"] .sim-esq { justify-content: flex-start; }
+[data-sim="a"] .sim-pe { flex: 1 1 auto; display: flex; flex-direction: column; gap: 10px; }
+[data-sim="a"] .sim-pe #leg-sim { margin-top: auto; }
+/* altura fixa do resumo no layout lado a lado (D094): 481 px = maior caso medido (DECOMP no piso, 3 alertas);
+   com menos texto sobra espaço dentro do card e nada se move à esquerda; acima disso o card cresce, sem cortar */
+@media (min-width: 1101px) { [data-sim="a"] .sim-resumo { min-height: 481px; box-sizing: border-box; } }
