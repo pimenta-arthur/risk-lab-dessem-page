@@ -334,3 +334,16 @@ table.mat td small { display: block; color: var(--ink-3); }
 /* altura fixa do resumo no layout lado a lado (D094): 481 px = maior caso medido (DECOMP no piso, 3 alertas);
    com menos texto sobra espaço dentro do card e nada se move à esquerda; acima disso o card cresce, sem cortar */
 @media (min-width: 1101px) { [data-sim="a"] .sim-resumo { min-height: 481px; box-sizing: border-box; } }
+
+/* dias do mês do simulador (D095): botão entre a sensibilidade e o rodapé, tabela e CSV */
+.sim-dias > summary { cursor: pointer; font-size: 0.82rem; color: var(--accent); width: max-content; }
+.sim-dias[open] > summary { margin-bottom: 8px; }
+.sim-dias-corpo { display: grid; gap: 8px; }
+.sim-dias .barra-dias { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--ink-2); }
+.sim-dias .rolagem { max-height: 360px; overflow: auto; }
+#t-dias { width: 100%; }
+#t-dias th, #t-dias td { padding: 3px 6px; font-size: 0.76rem; }
+#t-dias th small, #t-dias td small { display: block; color: var(--ink-3); font-weight: 400; font-size: 0.66rem; }
+#t-dias thead th { position: sticky; top: 0; background: var(--surface); }
+#t-dias tr.fds td { color: var(--ink-3); }
+#t-dias tr.destaque td { font-weight: 600; }

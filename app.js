@@ -809,6 +809,48 @@
       const mt = q('[data-m="tot"]'); if (mt) mt.innerHTML = `<b>${sn(r.delta, 1)}</b>`;
       const pt = q('[data-pl="tot"]'); if (pt) pt.textContent = `no mês ${sn(r.delta, 1)} · peso 100%`;
     }
+    // dias do mês (D095): cada dia recebe o dia típico do seu tipo; a média dos dias é o PLD previsto do mês
+    const DSEM = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"], TIPO_COD = { u: "útil", s: "sábado", d: "domingo/feriado", f: "domingo/feriado" };
+    const NOME_COD = { u: "útil", s: "sábado", d: "domingo", f: "feriado" };
+    let DIAS_CSV = null;
+    function linhasDias(c) {
+      const P = c.piso, esp = Math.max(DEC - P, 0), [y, mm] = c.mes.split("-").map(Number);
+      return [...(c.dias || "")].map((cod, i) => {
+        const t = TIPO_COD[cod], p = PREM[t], n_ = Math.min(Math.max(p.horas_piso, 0), NV);
+        const base = diaTipico(p, DEC, P, premioEf(t, "ponta", DEC)), est = diaTipico(p, DEC, P, premioEf(t, "sens", DEC));
+        return { data: `${String(i + 1).padStart(2, "0")}/${String(mm).padStart(2, "0")}/${y}`, dsem: DSEM[new Date(y, mm - 1, i + 1).getDay()], cod, t,
+          piso: n_, fora: Math.max(DEC + p.frac_fora * esp, P), ponta: precoEf(t, "ponta", DEC, P), pld: base.pld, pontaEst: precoEf(t, "sens", DEC, P), est: est.pld,
+          esp_: cod === "u" ? (1 - PCT / 100) * base.pld + PCT / 100 * est.pld : base.pld };
+      });
+    }
+    function desenharDias(r, c, mix, pu) {
+      const tb = document.querySelector("#t-dias tbody"); if (!tb) return;
+      const L = linhasDias(c), N = L.length || 1, med = L.reduce((a, x) => a + x.pld, 0) / N, medEst = L.reduce((a, x) => a + x.est, 0) / N;
+      const pldMes = Math.max(med, c.piso), confere = Math.abs(pldMes - r.pld) < 0.05, sensMes = mix(PCT / 100);
+      document.querySelector("#t-dias thead").innerHTML = `<tr><th>Data</th><th>Tipo</th><th class="n">Piso<small>h/dia</small></th><th class="n">Outras<small>R$</small></th><th class="n">Ponta<small>R$</small></th><th class="n">PLD dia<small>R$/MWh</small></th><th class="n" title="PLD esperado do dia útil com a ponta em R$ ${n(pu)} em ${n(PCT)}% dos dias úteis: (1 − ${n(PCT)}%) × PLD do dia + ${n(PCT)}% × PLD do dia com essa ponta. Com a ponta em R$ ${n(pu)} o dia todo: ${n(L.find(x => x.cod === "u")?.est, 1)}.">Estresse ${n(PCT)}%<small>ponta ${n(pu)}</small></th></tr>`;
+      tb.innerHTML = L.map(x => `<tr class="${x.cod === "u" ? "" : "fds"}"><td>${x.data.slice(0, 5)} ${x.dsem}</td><td>${NOME_COD[x.cod]}</td><td class="n">${n(x.piso, 1)}</td><td class="n">${n(x.fora, 1)}</td><td class="n">${n(x.ponta, 1)}</td><td class="n"><b>${n(x.pld, 1)}</b></td><td class="n">${x.cod === "u" ? n(x.esp_, 1) : n(x.pld, 1)}</td></tr>`).join("") +
+        `<tr class="destaque"><td colspan="5">Média dos ${L.length} dias${confere ? " = PLD previsto ✓" : ""}</td><td class="n"><b>${n(pldMes, 1)}</b></td><td class="n">${n(Math.max(L.reduce((a, x) => a + x.esp_, 0) / N, c.piso), 1)}</td></tr>`;
+      const nU = L.filter(x => x.cod === "u").length, nS = L.filter(x => x.cod === "s").length, nD = L.length - nU - nS;
+      document.getElementById("dias-txt").innerHTML = `${nU} úteis, ${nS} sábados, ${nD} domingos e feriados · média dos dias <b>${n(pldMes, 1)}</b>${confere ? " = PLD previsto ✓" : ""}`;
+      document.getElementById("dias-leg").textContent = `No modelo, todos os dias do mesmo tipo têm o mesmo preço: a tabela mostra como o PLD do mês se forma pelo calendário, não uma previsão de cada dia. PLD do dia = [horas do vale no piso × piso + (20 − horas no piso) × outras horas + 4 × ponta] / 24. A última coluna é o PLD esperado de cada dia útil com a ponta em R$ ${n(pu)} em ${n(PCT)}% dos dias úteis, (1 − p) × PLD do dia + p × PLD do dia com essa ponta; a média dela é o PLD com a sensibilidade (não são dias específicos).`;
+      DIAS_CSV = { c, L, pldMes, sensMes, pu, medEst };
+    }
+    // CSV para o Excel em português: separador ";", vírgula decimal, BOM para os acentos
+    function baixarCsv() {
+      if (!DIAS_CSV) return;
+      const { c, L, pldMes, sensMes, pu } = DIAS_CSV, j = JANS[JAN], f = (v, k = 2) => v == null || !isFinite(v) ? "" : v.toFixed(k).replace(".", ",");
+      const meta = [["Simulação do PLD médio do mês (SE/CO)", ""], ["Mês", c.mes], ["DECOMP médio digitado (R$/MWh)", f(DEC)], ["Piso (R$/MWh)", f(c.piso)],
+        ["Premissas", `janela de ${JAN} dias (${dataBr(j.inicio)} a ${dataBr(j.fim)})${editouPrem() ? ", editadas" : ""}`],
+        ["Desconto das outras horas (% do espaço)", f(PREM["útil"].frac_fora * 100, 1)], ["PLD previsto do mês (R$/MWh)", f(pldMes)],
+        ["Sensibilidade", `ponta útil a R$ ${f(pu, 0)} em ${PCT}% dos dias úteis: ${f(sensMes)} R$/MWh`]];
+      const cab = ["Data", "Dia", "Tipo", "Vale no piso (h/dia)", "Outras horas (R$/MWh)", "Ponta 18h-21h (R$/MWh)", "PLD do dia (R$/MWh)", `PLD do dia com a ponta útil a R$ ${f(pu, 0)} o dia todo (R$/MWh)`, `PLD esperado do dia com a ponta útil a R$ ${f(pu, 0)} em ${PCT}% dos dias úteis (R$/MWh)`];
+      const linhas = L.map(x => [x.data, x.dsem, NOME_COD[x.cod], f(x.piso, 1), f(x.fora), f(x.ponta), f(x.pld), x.cod === "u" ? f(x.est) : "", f(x.esp_)]);
+      const csv = "\ufeff" + [...meta.map(m => m.join(";")), "", cab.join(";"), ...linhas.map(l => l.join(";")), ["Média", "", "", "", "", "", f(pldMes), "", f(sensMes)].join(";")].join("\r\n");
+      const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+      a.download = `simulacao_pld_${c.mes}_decomp${Math.round(DEC)}.csv`; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+    }
+    { const b = document.getElementById("btn-csv"); if (b) b.addEventListener("click", baixarCsv); }
+
     // resumo para a mesa, versão 2 (D091): cada item com valor, "como ler" e o método na dica; frase de leitura por
     // regras fixas e só descritiva. Histórico = backtest exportado (meses encerrados, mesma antecedência, DECOMP realizado)
     function resumoV2(res, r, c, sens, pu, ante, editado) {
@@ -939,6 +981,7 @@
         dicaEm(lg.querySelector(".info"), `${longo}<br>Campos editáveis: borda azul = editado; detalhes na dica de cada linha e na metodologia.`);
       }
       desenharSens(r, c, mix, pu);
+      desenharDias(r, c, mix, pu);
       marcarEditados(); desenharPeso(r, c); desenharTraj(); desenharHMTodos();
       marcarChips();
       document.getElementById("veredito").innerHTML = r.acerto === null
